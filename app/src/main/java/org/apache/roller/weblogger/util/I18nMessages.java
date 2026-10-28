@@ -67,18 +67,21 @@ public final class I18nMessages {
         
         LOG.debug("request for messages in locale = " + locale);
         
-        // check if we already have a message utils created for that locale
-        I18nMessages messages = messagesMap.get(I18nUtils.toLocale(locale));
-        
-        // if no utils for that language yet then construct
-        if(messages == null) {
-            messages = new I18nMessages(locale);
+        Locale loc = I18nUtils.toLocale(locale);
+        synchronized (messagesMap) {
+            // check if we already have a message utils created for that locale
+            I18nMessages messages = messagesMap.get(loc);
             
-            // keep a reference to it
-            messagesMap.put(messages.getLocale(), messages);
+            // if no utils for that language yet then construct
+            if(messages == null) {
+                messages = new I18nMessages(locale);
+                
+                // keep a reference to it
+                messagesMap.put(messages.getLocale(), messages);
+            }
+            
+            return messages;
         }
-        
-        return messages;
     }
     
     
@@ -89,18 +92,20 @@ public final class I18nMessages {
         
         LOG.debug("request for messages in locale = " + locale.toString());
         
-        // check if we already have a message utils created for that locale
-        I18nMessages messages = messagesMap.get(locale);
-        
-        // if no utils for that language yet then construct
-        if(messages == null) {
-            messages = new I18nMessages(locale);
+        synchronized (messagesMap) {
+            // check if we already have a message utils created for that locale
+            I18nMessages messages = messagesMap.get(locale);
             
-            // keep a reference to it
-            messagesMap.put(messages.getLocale(), messages);
+            // if no utils for that language yet then construct
+            if(messages == null) {
+                messages = new I18nMessages(locale);
+                
+                // keep a reference to it
+                messagesMap.put(messages.getLocale(), messages);
+            }
+            
+            return messages;
         }
-        
-        return messages;
     }
     
     
